@@ -1,0 +1,6 @@
+streamlit
+pandas
+requests
+tqdm
+urllib3
+pyarrow
