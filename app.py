@@ -50,8 +50,6 @@ if 'merged' not in st.session_state:
             st.session_state['merged'] = pd.read_parquet(MERGED_FILE)
             with open(CCMAP_FILE) as f:
                 st.session_state['ccmap'] = json.load(f)
-            mtime = datetime.fromtimestamp(MERGED_FILE.stat().st_mtime)
-            st.session_state['last_updated'] = mtime.strftime('%d %b %Y %H:%M')
         except Exception as e:
             st.error(f'Could not load saved data: {e}')
             st.stop()
@@ -65,8 +63,9 @@ ccmap: dict = st.session_state['ccmap']
 
 # --- Sidebar ---
 with st.sidebar:
-    if 'last_updated' in st.session_state:
-        st.caption(f'Last updated: {st.session_state["last_updated"]}')
+    if MERGED_FILE.exists():
+        mtime = datetime.fromtimestamp(MERGED_FILE.stat().st_mtime)
+        st.caption(f'Last updated: {mtime.strftime("%d %b %Y %H:%M")}')
     st.caption(f'{len(merged):,} round-trip combinations loaded')
 
 # --- Filters ---
