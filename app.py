@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -92,7 +92,8 @@ all_dates_y = sorted(merged['date_y'].dropna().unique())
 
 col7, col8 = st.columns(2)
 with col7:
-    start_date = st.date_input('Outbound from', value=all_dates_x[0],
+    default_start = max(all_dates_x[0], date.today())
+    start_date = st.date_input('Outbound from', value=default_start,
                                min_value=all_dates_x[0], max_value=all_dates_x[-1])
 with col8:
     end_date = st.date_input('Return by', value=all_dates_y[-1],
