@@ -43,13 +43,15 @@ def apply_filters(data: pd.DataFrame, country: str, city: str,
 st.set_page_config(page_title='Flight Finder', page_icon='✈', layout='wide')
 st.title('✈ Round-Trip Flight Finder — from Sofia')
 
-# --- Load saved data ---
-if 'merged' not in st.session_state:
+# --- Load saved data (reload if file has changed) ---
+current_mtime = MERGED_FILE.stat().st_mtime if MERGED_FILE.exists() else None
+if 'merged' not in st.session_state or st.session_state.get('_mtime') != current_mtime:
     if MERGED_FILE.exists() and CCMAP_FILE.exists():
         try:
             st.session_state['merged'] = pd.read_parquet(MERGED_FILE)
             with open(CCMAP_FILE) as f:
                 st.session_state['ccmap'] = json.load(f)
+            st.session_state['_mtime'] = current_mtime
         except Exception as e:
             st.error(f'Could not load saved data: {e}')
             st.stop()
