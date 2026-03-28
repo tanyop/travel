@@ -1,5 +1,5 @@
 import json
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
@@ -63,9 +63,8 @@ ccmap: dict = st.session_state['ccmap']
 
 # --- Sidebar ---
 with st.sidebar:
-    if MERGED_FILE.exists():
-        mtime = datetime.fromtimestamp(MERGED_FILE.stat().st_mtime)
-        st.caption(f'Last updated: {mtime.strftime("%d %b %Y %H:%M")}')
+    if last_updated := ccmap.get('_last_updated'):
+        st.caption(f'Last updated: {last_updated}')
     st.caption(f'{len(merged):,} round-trip combinations loaded')
 
 # --- Filters ---

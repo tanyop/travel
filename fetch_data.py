@@ -11,7 +11,7 @@ Cron (06:00, 12:00 and 18:00 UTC):
 
 import json
 import logging
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from flights_data import FlightsData
@@ -51,6 +51,7 @@ def main():
     ccmap = fd.country_city_map
 
     merged.to_parquet(MERGED_FILE)
+    ccmap['_last_updated'] = datetime.now(timezone.utc).strftime('%d %b %Y %H:%M UTC')
     with open(CCMAP_FILE, 'w') as f:
         json.dump(ccmap, f)
 
