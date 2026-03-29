@@ -118,8 +118,11 @@ if not filtered.empty:
 if city == 'All' and not filtered.empty:
     group_col = 'country_x' if country == 'All' else 'destination_city'
     label = 'Country' if country == 'All' else 'City'
+    chart_source = merged[(merged['total_price'] > 0) & (merged['price_x'] > 0) & (merged['price_y'] > 0)]
+    if country != 'All':
+        chart_source = chart_source[chart_source['destination_city'].isin(ccmap.get(country, []))]
     chart_df = (
-        filtered.groupby(group_col)['total_price']
+        chart_source.groupby(group_col)['total_price']
         .min()
         .reset_index()
         .rename(columns={group_col: label, 'total_price': 'Min Price (€)'})
@@ -132,7 +135,7 @@ if city == 'All' and not filtered.empty:
         .mark_bar()
         .encode(
             x=alt.X('Min Price (€):Q', title='Cheapest Round-Trip (€)'),
-            y=alt.Y(f'{label}:N', sort=None, title=None),
+            y=alt.Y(f'{label}:N', sort=None, title=None, axis=alt.Axis(labelLimit=200, labelOverlap=False)),
             tooltip=[label, alt.Tooltip('Min Price (€):Q', format='.0f')],
         )
         .properties(height=max(200, 25 * len(chart_df)))
