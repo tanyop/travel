@@ -2,6 +2,8 @@ import json
 from datetime import date
 from pathlib import Path
 
+import altair as alt
+
 import pandas as pd
 import streamlit as st
 
@@ -63,9 +65,8 @@ if 'merged' not in st.session_state:
 merged: pd.DataFrame = st.session_state['merged']
 ccmap: dict = st.session_state['ccmap']
 
-# --- Sidebar ---
-with st.sidebar:
-    st.caption(f'{len(merged):,} round-trip combinations loaded')
+if last_updated := ccmap.get('_last_updated'):
+    st.caption(f'Data as of {last_updated}')
 
 # --- Filters ---
 col1, col2, col3 = st.columns(3)
@@ -113,6 +114,31 @@ if not filtered.empty:
     m2.metric('Cheapest Trip', f'€{filtered["total_price"].min():.0f}')
     m3.metric('Avg Total Price', f'€{filtered["total_price"].mean():.0f}')
 
+# --- Chart ---
+if city == 'All' and not filtered.empty:
+    group_col = 'country_x' if country == 'All' else 'destination_city'
+    label = 'Country' if country == 'All' else 'City'
+    chart_df = (
+        filtered.groupby(group_col)['total_price']
+        .min()
+        .reset_index()
+        .rename(columns={group_col: label, 'total_price': 'Min Price (€)'})
+        .sort_values('Min Price (€)')
+    )
+    title = 'Cheapest by Country' if country == 'All' else f'Cheapest by City — {country}'
+    st.subheader(title)
+    chart = (
+        alt.Chart(chart_df)
+        .mark_bar()
+        .encode(
+            x=alt.X('Min Price (€):Q', title='Cheapest Round-Trip (€)'),
+            y=alt.Y(f'{label}:N', sort=None, title=None),
+            tooltip=[label, alt.Tooltip('Min Price (€):Q', format='.0f')],
+        )
+        .properties(height=max(200, 25 * len(chart_df)))
+    )
+    st.altair_chart(chart, use_container_width=True)
+
 st.divider()
 
 # --- Results table ---
@@ -139,7 +165,7 @@ else:
                   .set_index('Destination'))
 
     st.dataframe(
-        display_df.head(200),
+        display_df.head(500),
         use_container_width=True,
         column_config={
             'Total €': st.column_config.NumberColumn(format='€%.0f'),

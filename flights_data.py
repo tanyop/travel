@@ -74,7 +74,7 @@ CITY_NAME_NORMALIZATIONS = {
     'Paris (All Airports)': 'Paris',
     'London Luton': 'London',
     'London (All Airports)': 'London',
-    'Brussels Charleroi': 'Charleroi', 'Milan Bergamo': 'Bergamo',
+    'Brussels Charleroi': 'Charleroi', 'Milan Bergamo': 'Bergamo', 'Milan (All Airports)': 'Bergamo',
     'Barcelona El Prat': 'Barcelona', 'Memmingen / Munich West': 'Memmingen',
     'Memmingen / Munchen Vest': 'Memmingen',
     'Frankfurt Hahn': 'Frankfurt', 'Kraków\r\n': 'Krakow', 'Kraków': 'Krakow',
