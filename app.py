@@ -65,8 +65,6 @@ ccmap: dict = st.session_state['ccmap']
 
 # --- Sidebar ---
 with st.sidebar:
-    if last_updated := ccmap.get('_last_updated'):
-        st.caption(f'Last updated: {last_updated}')
     st.caption(f'{len(merged):,} round-trip combinations loaded')
 
 # --- Filters ---
