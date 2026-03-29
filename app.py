@@ -70,7 +70,7 @@ with st.sidebar:
 # --- Filters ---
 col1, col2, col3 = st.columns(3)
 with col1:
-    country_options = ['All'] + [k for k in ccmap if k != 'All']
+    country_options = ['All'] + [k for k in ccmap if k != 'All' and not k.startswith('_')]
     country = st.selectbox('Country', country_options)
 with col2:
     city_options = ['All'] + (ccmap.get(country, []) if country != 'All' else ccmap['All'])
